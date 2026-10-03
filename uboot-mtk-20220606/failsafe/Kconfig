@@ -1,0 +1,42 @@
+#
+# Failsafe Web UI
+#
+
+menuconfig WEBUI_FAILSAFE
+	bool "Enable Failsafe Web UI"
+	select TCP
+	select HTTPD
+	default n
+	help
+	  Enable Web based failsafe UI
+
+if WEBUI_FAILSAFE
+
+choice
+	prompt "Failsafe Web UI theme"
+	default WEBUI_FAILSAFE_UI_GL
+	help
+	  Select failsafe web ui theme
+
+config WEBUI_FAILSAFE_UI_GL
+	bool "fsdata (GL theme)"
+
+config WEBUI_FAILSAFE_UI_NEW1
+	bool "fsdata-new1 (new1 theme)"
+
+config WEBUI_FAILSAFE_UI_NEW2
+	bool "fsdata-new2 (new2 theme)"
+
+config WEBUI_FAILSAFE_UI_NEW3
+	bool "fsdata-new3 (new3 theme)"
+
+config WEBUI_FAILSAFE_UI_MTK
+	bool "fsdata-new3 (mtk theme)"
+
+endchoice
+
+config WEBUI_FAILSAFE_ON_AUTOBOOT_FAIL
+	bool "Start Failsafe Web UI on autoboot failure"
+	default n
+
+endif # WEBUI_FAILSAFE
