@@ -44,8 +44,6 @@ on:
         type: choice
         options:
           - default
-          - multi_layout
-          - dis_fixed_mtdparts
 
       GEN_BL2:
         description: 'Generate BL2 binary(v22/23 only)'
