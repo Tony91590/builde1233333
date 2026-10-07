@@ -22,7 +22,7 @@ on:
       FIP_VERSION:
         description: 'FIP versions (comma-separated, e.g. 2022,2023,2024/all)'
         required: true
-        default: '2024'
+        default: '2022'
         type: string
 
       REPO_URL:
@@ -40,12 +40,10 @@ on:
       EXTRA_OPTION:
         description: 'Extra option'
         required: false
-        default: 'multi_layout'
+        default: 'default'
         type: choice
         options:
           - default
-          - multi_layout
-          - dis_fixed_mtdparts
 
       GEN_BL2:
         description: 'Generate BL2 binary(v22/23 only)'
