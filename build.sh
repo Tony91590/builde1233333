@@ -258,6 +258,7 @@ if [ "$FSTHEME" = "mtk" ] || [ "$FSTHEME" = "MTK" ]; then
     echo "CONFIG_WEBUI_FAILSAFE_UI_MTK=y" >> "$UBOOT_DIR/.config"
 fi
 
+grep -q "CONFIG_ENV_VARS_UBOOT_CONFIG=y" "$UBOOT_DIR/.config" || echo "CONFIG_ENV_VARS_UBOOT_CONFIG=y" >> "$UBOOT_DIR/.config"
 make -C "$UBOOT_DIR" olddefconfig
 make -C "$UBOOT_DIR" clean
 make -C "$UBOOT_DIR" -j "$(nproc)" all
