@@ -8,14 +8,14 @@ FSTHEME=${FSTHEME:-gl}
 fixedparts=${FIXED_MTDPARTS:-1}
 multilayout=${MULTI_LAYOUT:-0}
 
-if [ "$VERSION" = "2022" ]; then
+if [ "$VERSION" = "2021" ]; then
     UBOOT_DIR=uboot-mtk-20220606
     ATF_DIR=atf-20240117-bacca82a8
 elif [ "$VERSION" = "2023" ]; then
     UBOOT_DIR=uboot-mtk-20230718-09eda825
     ATF_DIR=atf-20231013-0ea67d76a
-elif [ "$VERSION" = "2024" ]; then
-    UBOOT_DIR=uboot-mtk-20230718-09eda825
+elif [ "$VERSION" = "2022" ]; then
+    UBOOT_DIR=uboot-mtk-20220606
     ATF_DIR=atf-20240117-bacca82a8
 else
     echo "Error: Unsupported VERSION. Please specify VERSION=2022/2023/2024/2025."
