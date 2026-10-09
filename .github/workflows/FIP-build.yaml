@@ -48,7 +48,7 @@ on:
       GEN_BL2:
         description: 'Generate BL2 binary(v22/23 only)'
         required: false
-        default: true
+        default: false
         type: boolean
 
       OVERCLOCK:
