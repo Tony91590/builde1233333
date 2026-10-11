@@ -1,3 +1,10 @@
+--- a/atf-20220606-637ba581b/configs/mt7986_redmi_ax6000_defconfig
++++ b/atf-20220606-637ba581b/configs/mt7986_redmi_ax6000_defconfig
+@@ -2,3 +2,4 @@ CONFIG_PLAT_MT7986=y
+ CONFIG_TARGET_FIP_NO_SEC_BOOT=y
+ CONFIG_FLASH_DEVICE_SPIM_NAND=y
+ CONFIG_DRAM_DDR4=y
++# CONFIG_NMBM is not set
 --- a/uboot-mtk-20220606/board/mediatek/common/ubi_helper.c
 +++ b/uboot-mtk-20220606/board/mediatek/common/ubi_helper.c
 @@ -532,9 +532,9 @@ static int boot_from_ubi(struct mtd_info *mtd)
