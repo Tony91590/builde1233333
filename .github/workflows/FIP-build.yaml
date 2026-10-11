@@ -51,8 +51,8 @@ on:
         default: true
         type: boolean
 
-      OVERCLOCK:
-        description: 'Enable overclock'
+      UBOOTMOD:
+        description: 'Enable FIT UBOOTMOD OpenWrt'
         required: false
         default: false
         type: boolean
@@ -134,12 +134,12 @@ jobs:
           echo "UPLOAD_RELEASE=false" >> "$GITHUB_ENV"
         fi
 
-        if [ "${{ github.event.inputs.OVERCLOCK }}" = "true" ]; then
-          echo "OVERCLOCK_ENABLED=true" >> "$GITHUB_ENV"
-          echo "Overclock: ENABLED"
+        if [ "${{ github.event.inputs.UBOOTMOD }}" = "true" ]; then
+          echo "UBOOTMOD_ENABLED=true" >> "$GITHUB_ENV"
+          echo "ubootmod: ENABLED"
         else
           echo "OVERCLOCK_ENABLED=false" >> "$GITHUB_ENV"
-          echo "Overclock: DISABLED"
+          echo "ubootmod: DISABLED"
         fi
 
     - name: Bootstrap environment
@@ -516,7 +516,7 @@ jobs:
         echo "FIP Version: ${{ github.event.inputs.FIP_VERSION }}"
         echo "Extra option: ${{ github.event.inputs.EXTRA_OPTION }}"
         echo "Generate BL2: ${{ github.event.inputs.GEN_BL2 }}"
-        echo "Overclock: ${{ github.event.inputs.OVERCLOCK }}"
+        echo "ubootmod: ${{ github.event.inputs.UBOOTMOD }}"
         echo "========================================"
 
         # ---------------------------------------------------------
@@ -540,8 +540,8 @@ jobs:
           echo "Applying: modify-patch/diff-oc.patch"
           echo "========================================"
 
-          if [ ! -f "modify-patch/diff-oc.patch" ]; then
-            echo "ERROR: modify-patch/diff-oc.patch not found"
+          if [ ! -f "modify-patch/diff-fit.patch" ]; then
+            echo "ERROR: modify-patch/diff-fit.patch not found"
             exit 1
           fi
 
