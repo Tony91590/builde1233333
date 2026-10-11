@@ -534,10 +534,10 @@ jobs:
         # ---------------------------------------------------------
         # Optional overclock patch
         # ---------------------------------------------------------
-        if [ "${{ github.event.inputs.OVERCLOCK }}" = "true" ]; then
+        if [ "${{ github.event.inputs.UBOOTMOD }}" = "true" ]; then
           echo "========================================"
-          echo "Overclock ENABLED"
-          echo "Applying: modify-patch/diff-oc.patch"
+          echo "ubootmod ENABLED"
+          echo "Applying: modify-patch/diff-fit.patch"
           echo "========================================"
 
           if [ ! -f "modify-patch/diff-fit.patch" ]; then
@@ -550,8 +550,8 @@ jobs:
           echo "Overclock patch successfully applied."
         else
           echo "========================================"
-          echo "Overclock DISABLED"
-          echo "Skipping: modify-patch/diff-oc.patch"
+          echo "ubootmod DISABLED"
+          echo "Skipping: modify-patch/diff-fit.patch"
           echo "========================================"
         fi
 
