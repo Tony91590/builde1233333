@@ -1,134 +1,121 @@
---- a/atf-20220606-637ba581b/plat/mediatek/mt7981/drivers/pll/pll.c
-+++ b/atf-20220606-637ba581b/plat/mediatek/mt7981/drivers/pll/pll.c
-@@ -70,8 +70,14 @@ unsigned int mtk_get_cpu_freq()
+--- a/uboot-mtk-20220606/board/mediatek/common/ubi_helper.c
++++ b/uboot-mtk-20220606/board/mediatek/common/ubi_helper.c
+@@ -532,9 +532,9 @@ static int boot_from_ubi(struct mtd_info *mtd)
+ 	if (ret)
+ 		return ret;
  
- void mtk_pll_init(int skip_dcm_setting)
- {
--
--	/* Power on PLL */
-+	uint32_t readreg;
-+	mmio_clrbits_32(ARMPLL_CON1, ARMPLL_CON1_ALL0); // clear all armpll_con1
-+	readreg = mmio_read_32(ARMPLL_CON1); //read con1
-+	NOTICE("CON1 should 0 actual %X",readreg); //print con1
-+	mmio_write_32(ARMPLL_CON1, 0x52000000);
-+	mmio_clrbits_32(ARMPLL_CON0 , DIVIDE_RATIO_BIT4);
-+
-+
- 	mmio_setbits_32(ARMPLL_PWR_CON0, CON0_PWR_ON);
- 	mmio_setbits_32(NET2PLL_PWR_CON0, CON0_PWR_ON);
- 	mmio_setbits_32(MMPLL_PWR_CON0, CON0_PWR_ON);
-@@ -92,13 +98,18 @@ void mtk_pll_init(int skip_dcm_setting)
- 	mmio_clrbits_32(NET1PLL1_PWR_CON0, CON0_ISO_EN);
- 	mmio_clrbits_32(APLL2_PWR_CON0, CON0_ISO_EN);
- 	mmio_clrbits_32(MPLL_PWR_CON0, CON0_ISO_EN);
-+
-+
-+	mmio_clrbits_32(ARMPLL_CON0 , DIVIDE_RATIO_BIT4);  //can clear - depand on armpll_con1
+-	ret = read_ubi_volume("kernel", (void *)data_load_addr, 0);
++	ret = read_ubi_volume("fit", (void *)data_load_addr, 0);
+ 	if (ret == -ENODEV)
+-		ret = read_ubi_volume("fit", (void *)data_load_addr, 0);
++		ret = read_ubi_volume("kernel", (void *)data_load_addr, 0);
+ 	if (ret)
+ 		return ret;
  
- 	/* Set PLL frequency */
--	mmio_write_32(ARMPLL_CON1, 0x82000000); /* 1.3G */
+--- a/uboot-mtk-20220606/board/mediatek/mt7622/bootmenu_emmc.c
++++ b/uboot-mtk-20220606/board/mediatek/mt7622/bootmenu_emmc.c
+@@ -291,9 +291,9 @@ int board_boot_default(void)
+ #else
+ 	int ret;
  
--	//mmio_setbits_32(ARMPLL_CON0, 0x124); /* divider for 650M */
-+	readreg = mmio_read_32(ARMPLL_CON1); //read con1
-+	NOTICE("CON1 should 0 actual %X",readreg); //print con1
-+	mmio_write_32(ARMPLL_CON1, 0x52000000);
-+	mmio_setbits_32(ARMPLL_CON0, 0x104);
+-	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
++	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
+ 	if (ret == -ENODEV)
+-		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
++		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
  
--	mmio_setbits_32(ARMPLL_CON0, 0x114); /* divider for 1.3G */
-+
+ 	return ret;
+ #endif /* CONFIG_MTK_DUAL_BOOT */
+--- a/uboot-mtk-20220606/board/mediatek/mt7981/bootmenu_emmc.c
++++ b/uboot-mtk-20220606/board/mediatek/mt7981/bootmenu_emmc.c
+@@ -291,9 +291,9 @@ int board_boot_default(void)
+ #else
+ 	int ret;
  
- 	mmio_setbits_32(NET2PLL_CON0, 0x114);
- 	mmio_setbits_32(MMPLL_CON0, 0x124);
---- a/atf-20220606-637ba581b/plat/mediatek/mt7981/drivers/pll/pll.h
-+++ b/atf-20220606-637ba581b/plat/mediatek/mt7981/drivers/pll/pll.h
-@@ -64,7 +64,8 @@
- #define CON0_POST_DIV(x)	((x) << 1)
- #define CON1_PCW_CHG		BIT(31)
- #define UNIV_48M_EN		BIT(27)
--
-+#define DIVIDE_RATIO_BIT4	0x10
-+#define ARMPLL_CON1_ALL0        0xFF000000
- #define SCP_AXICK_DCM_DIS_EN	BIT(0)
- #define SCP_AXICK_26M_SEL_EN	BIT(4)
-
---- a/atf-20231013-0ea67d76a/plat/mediatek/mt7981/drivers/pll/pll.c
-+++ b/atf-20231013-0ea67d76a/plat/mediatek/mt7981/drivers/pll/pll.c
-@@ -70,8 +70,14 @@ unsigned int mtk_get_cpu_freq()
+-	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
++	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
+ 	if (ret == -ENODEV)
+-		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
++		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
  
- void mtk_pll_init(int skip_dcm_setting)
- {
--
--	/* Power on PLL */
-+	uint32_t readreg;
-+	mmio_clrbits_32(ARMPLL_CON1, ARMPLL_CON1_ALL0); // clear all armpll_con1
-+	readreg = mmio_read_32(ARMPLL_CON1); //read con1
-+	NOTICE("CON1 should 0 actual %X",readreg); //print con1
-+	mmio_write_32(ARMPLL_CON1, 0x52000000);
-+	mmio_clrbits_32(ARMPLL_CON0 , DIVIDE_RATIO_BIT4);
-+
-+
- 	mmio_setbits_32(ARMPLL_PWR_CON0, CON0_PWR_ON);
- 	mmio_setbits_32(NET2PLL_PWR_CON0, CON0_PWR_ON);
- 	mmio_setbits_32(MMPLL_PWR_CON0, CON0_PWR_ON);
-@@ -92,13 +98,18 @@ void mtk_pll_init(int skip_dcm_setting)
- 	mmio_clrbits_32(NET1PLL1_PWR_CON0, CON0_ISO_EN);
- 	mmio_clrbits_32(APLL2_PWR_CON0, CON0_ISO_EN);
- 	mmio_clrbits_32(MPLL_PWR_CON0, CON0_ISO_EN);
-+
-+
-+	mmio_clrbits_32(ARMPLL_CON0 , DIVIDE_RATIO_BIT4);  //can clear - depand on armpll_con1
+ 	return ret;
+ #endif /* CONFIG_MTK_DUAL_BOOT */
+--- a/uboot-mtk-20220606/board/mediatek/mt7986/bootmenu_emmc.c
++++ b/uboot-mtk-20220606/board/mediatek/mt7986/bootmenu_emmc.c
+@@ -291,9 +291,9 @@ int board_boot_default(void)
+ #else
+ 	int ret;
  
- 	/* Set PLL frequency */
--	mmio_write_32(ARMPLL_CON1, 0x82000000); /* 1.3G */
+-	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
++	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
+ 	if (ret == -ENODEV)
+-		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
++		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
  
--	//mmio_setbits_32(ARMPLL_CON0, 0x124); /* divider for 650M */
-+	readreg = mmio_read_32(ARMPLL_CON1); //read con1
-+	NOTICE("CON1 should 0 actual %X",readreg); //print con1
-+	mmio_write_32(ARMPLL_CON1, 0x52000000);
-+	mmio_setbits_32(ARMPLL_CON0, 0x104);
+ 	return ret;
+ #endif /* CONFIG_MTK_DUAL_BOOT */
+--- a/uboot-mtk-20220606/board/mediatek/mt7988/bootmenu_emmc.c
++++ b/uboot-mtk-20220606/board/mediatek/mt7988/bootmenu_emmc.c
+@@ -291,9 +291,9 @@ int board_boot_default(void)
+ #else
+ 	int ret;
  
--	mmio_setbits_32(ARMPLL_CON0, 0x114); /* divider for 1.3G */
-+
+-	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
++	ret = boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
+ 	if (ret == -ENODEV)
+-		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_PRODUCTION_NAME);
++		return boot_from_mmc_partition(EMMC_DEV_INDEX, 0, PART_KERNEL_NAME);
  
- 	mmio_setbits_32(NET2PLL_CON0, 0x114);
- 	mmio_setbits_32(MMPLL_CON0, 0x124);
---- a/atf-20231013-0ea67d76a/plat/mediatek/mt7981/drivers/pll/pll.h
-+++ b/atf-20231013-0ea67d76a/plat/mediatek/mt7981/drivers/pll/pll.h
-@@ -64,7 +64,8 @@
- #define CON0_POST_DIV(x)	((x) << 1)
- #define CON1_PCW_CHG		BIT(31)
- #define UNIV_48M_EN		BIT(27)
--
-+#define DIVIDE_RATIO_BIT4	0x10
-+#define ARMPLL_CON1_ALL0        0xFF000000
- #define SCP_AXICK_DCM_DIS_EN	BIT(0)
- #define SCP_AXICK_26M_SEL_EN	BIT(4)
- 
---- a/atf-20240117-bacca82a8/plat/mediatek/mt7981/drivers/pll/pll.c
-+++ b/atf-20240117-bacca82a8/plat/mediatek/mt7981/drivers/pll/pll.c
-@@ -94,11 +94,20 @@ void mtk_pll_init(int skip_dcm_setting)
- 	mmio_clrbits_32(MPLL_PWR_CON0, CON0_ISO_EN);
- 
- 	/* Set PLL frequency */
--	mmio_write_32(ARMPLL_CON1, 0x82000000); /* 1.3G */
--
--	//mmio_setbits_32(ARMPLL_CON0, 0x124); /* divider for 650M */
--
--	mmio_setbits_32(ARMPLL_CON0, 0x114); /* divider for 1.3G */
-+	// 251218: overclock hack
-+	NOTICE("THIS IS AN OVERCLOKING BL2!\n");
-+	NOTICE("set arm freq to 1.60 GHz:\n");
-+
-+	// mmio_write_32(ARMPLL_CON1, 0x82000000); /* 1.3G */
-+	mmio_write_32(ARMPLL_CON1, 0x50000000); /* 1.6G */
-+	// mmio_write_32(ARMPLL_CON1, 0x55000000); /* 1.7G */
-+	NOTICE("ARMPLL_CON1 = 0x%x\n", mmio_read_32(ARMPLL_CON1));
-+
-+	// mmio_setbits_32(ARMPLL_CON0, 0x124); /* divider for 650M */
-+	// mmio_setbits_32(ARMPLL_CON0, 0x114); /* divider for 1.3G */
-+	mmio_clrbits_32(ARMPLL_CON0, 0x70); /* divider for >1.3G */
-+	mmio_setbits_32(ARMPLL_CON0, 0x104);
-+	NOTICE("ARMPLL_CON0 = 0x%x\n", mmio_read_32(ARMPLL_CON0));
- 
- 	mmio_setbits_32(NET2PLL_CON0, 0x114);
- 	mmio_setbits_32(MMPLL_CON0, 0x124);
+ 	return ret;
+ #endif /* CONFIG_MTK_DUAL_BOOT */
+--- a/uboot-mtk-20220606/configs/mt7986_redmi_ax6000_defconfig
++++ b/uboot-mtk-20220606/configs/mt7986_redmi_ax6000_defconfig
+@@ -4,11 +4,8 @@ CONFIG_ARCH_MEDIATEK=y
+ CONFIG_SYS_TEXT_BASE=0x41e00000
+ CONFIG_SYS_MALLOC_F_LEN=0x4000
+ CONFIG_NR_DRAM_BANKS=1
+-CONFIG_ENV_SIZE=0x10000
+-CONFIG_ENV_OFFSET=0x100000
+ CONFIG_DEFAULT_DEVICE_TREE="mt7986a-redmi-ax6000"
+ CONFIG_TARGET_MT7986=y
+-CONFIG_ENABLE_NAND_NMBM=y
+ CONFIG_MEDIATEK_BOOTMENU=y
+ CONFIG_MEDIATEK_BOOTMENU_DELAY=3
+ CONFIG_MT7986_BOOTMENU_UBI=y
+@@ -39,7 +36,6 @@ CONFIG_CMD_GPIO=y
+ CONFIG_CMD_GPIO_READ=y
+ CONFIG_CMD_MMC=y
+ CONFIG_CMD_MTD=y
+-CONFIG_CMD_NMBM=y
+ CONFIG_CMD_PCI=y
+ CONFIG_CMD_TFTPPUT=y
+ # CONFIG_CMD_NFS is not set
+@@ -47,8 +43,8 @@ CONFIG_CMD_PING=y
+ CONFIG_CMD_LED_BLINK=y
+ CONFIG_CMD_SMC=y
+ CONFIG_CMD_MTDPARTS=y
+-CONFIG_MTDIDS_DEFAULT="nmbm0=nmbm0"
+-CONFIG_MTDPARTS_DEFAULT="nmbm0:1024k(bl2),256k(Nvram),256k(Bdata),2048k(factory),2048k(fip),256k(crash),256k(crash_log),112640k(ubi)"
++CONFIG_MTDIDS_DEFAULT="spi-nand0=spi-nand0"
++CONFIG_MTDPARTS_DEFAULT="spi-nand0:1024k(bl2),256k(Nvram),256k(Bdata),2048k(factory),2048k(fip),125440k(ubi)"
+ CONFIG_CMD_UBI=y
+ CONFIG_CMD_GL_BTN=y
+ CONFIG_DOS_PARTITION=y
+@@ -56,11 +52,13 @@ CONFIG_EFI_PARTITION=y
+ CONFIG_PARTITION_TYPE_GUID=y
+ CONFIG_OF_EMBED=y
+ CONFIG_ENV_OVERWRITE=y
+-CONFIG_ENV_IS_IN_MTD=y
+-CONFIG_ENV_MTD_NAME="nmbm0"
+-CONFIG_ENV_SIZE_REDUND=0x80000
++CONFIG_ENV_IS_IN_UBI=y
++CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
++CONFIG_ENV_UBI_PART="ubi"
++CONFIG_ENV_UBI_VOLUME="ubootenv"
++CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+ CONFIG_NET_RANDOM_ETHADDR=y
+ CONFIG_NET_FORCE_IPADDR=y
+ CONFIG_REGMAP=y
+ CONFIG_SYSCON=y
+ CONFIG_BUTTON=y
