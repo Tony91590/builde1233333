@@ -813,10 +813,10 @@ jobs:
         echo "- Extra options: ${{ github.event.inputs.EXTRA_OPTION }}" >> release.txt
 
         # Overclock status
-        if [ "${{ github.event.inputs.OVERCLOCK }}" = "true" ]; then
-          echo "- Overclock: enabled" >> release.txt
+        if [ "${{ github.event.inputs.UBOOTMOD }}" = "true" ]; then
+          echo "- ubootmod : enabled" >> release.txt
         else
-          echo "- Overclock: disabled" >> release.txt
+          echo "- ubootmod: disabled" >> release.txt
         fi
 
         if [ "${{ github.event.inputs.EXTRA_OPTION }}" = "dis_fixed_mtdparts" ]; then
