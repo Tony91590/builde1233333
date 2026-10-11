@@ -3,7 +3,7 @@
 TOOLCHAIN=aarch64-linux-gnu-
 
 # Default selection
-VERSION=${VERSION:-2024}
+VERSION=${VERSION:-2022}
 FSTHEME=${FSTHEME:-gl}
 fixedparts=${FIXED_MTDPARTS:-1}
 multilayout=${MULTI_LAYOUT:-0}
